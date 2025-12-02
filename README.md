@@ -2,6 +2,8 @@
 
 Una aplicación web de lista de la compra diseñada para optimizar la experiencia de compra en Mercadona, ordenando los productos según el recorrido físico por los pasillos.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=YOUR_GITHUB_REPO_URL)
+
 ## 🚀 Características
 
 - ✅ Gestión de listas de compra
@@ -32,6 +34,35 @@ npm run dev
 
 # Construir para producción
 npm run build
+
+# Preview del build de producción
+npm run preview
+```
+
+## 🌐 Deployment en Vercel
+
+Este proyecto está optimizado para desplegarse en Vercel:
+
+### Opción 1: Deploy desde la interfaz de Vercel
+
+1. Haz push de tu código a GitHub
+2. Ve a [vercel.com](https://vercel.com) e inicia sesión
+3. Haz clic en "New Project"
+4. Importa tu repositorio de GitHub
+5. Vercel detectará automáticamente la configuración:
+   - **Framework Preset:** Vite
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+6. Haz clic en "Deploy"
+
+### Opción 2: Deploy con Vercel CLI
+
+```bash
+# Instalar Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
 ```
 
 ## 🎯 Uso
