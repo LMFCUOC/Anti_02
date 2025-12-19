@@ -1,0 +1,113 @@
+/* Micro-animations for enhanced UX */
+
+/* Checkmark animation when completing an item */
+@keyframes checkmark-bounce {
+    0% {
+        transform: scale(0.8);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-checkmark {
+    animation: checkmark-bounce 0.3s ease-out;
+}
+
+/* Slide out animation for deleted items */
+@keyframes slide-out-right {
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.animate-slide-out {
+    animation: slide-out-right 0.3s ease-out forwards;
+}
+
+/* Celebration confetti effect */
+@keyframes confetti-fall {
+    0% {
+        opacity: 1;
+        transform: translateY(-10px) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(100px) rotate(720deg);
+    }
+}
+
+/* Pulse animation for progress bar completion */
+@keyframes pulse-success {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+}
+
+.animate-pulse-success {
+    animation: pulse-success 1s ease-out;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.animate-shimmer {
+    background: linear-gradient(90deg,
+            var(--card-bg) 25%,
+            var(--card-border) 50%,
+            var(--card-bg) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Bounce animation for empty state icons */
+@keyframes gentle-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.animate-gentle-bounce {
+    animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+/* Scale on press for touch feedback */
+.press-scale {
+    transition: transform 0.1s ease;
+}
+
+.press-scale:active {
+    transform: scale(0.97);
+}

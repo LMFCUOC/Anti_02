@@ -21,19 +21,19 @@ export function StoreList({ onNavigate }: StoreListProps) {
 
             <div className="space-y-4">
                 {stores.map(store => (
-                    <Card key={store.id} className="bg-white/90 backdrop-blur-xl border-white/50">
+                    <Card key={store.id} className="backdrop-blur-xl" style={{ background: 'var(--card-bg-solid)', borderColor: 'var(--card-border)' }}>
                         <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                            <CardTitle className="text-lg text-slate-800">{store.name}</CardTitle>
+                            <CardTitle className="text-lg" style={{ color: 'var(--text-primary)' }}>{store.name}</CardTitle>
                             <Button
                                 size="icon"
                                 variant="ghost"
                                 onClick={() => onNavigate('store-edit', { storeId: store.id })}
                             >
-                                <Settings className="w-5 h-5 text-slate-400" />
+                                <Settings className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                             </Button>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-sm text-slate-500">
+                            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                                 {store.sections.length} secciones configuradas
                             </p>
                         </CardContent>
@@ -43,3 +43,4 @@ export function StoreList({ onNavigate }: StoreListProps) {
         </div>
     )
 }
+

@@ -1,7 +1,8 @@
-import { useMemo } from "react"
-import { ArrowLeft, CheckCircle2, Circle } from "lucide-react"
+import { useMemo, useState } from "react"
+import { ArrowLeft, CheckCircle2, Circle, Search } from "lucide-react"
 import { useAppStore } from "@/store/useAppStore"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { DEFAULT_SECTIONS } from "@/lib/constants"
 
 
@@ -14,18 +15,28 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
     const { lists, stores, toggleItemComplete } = useAppStore()
     const list = lists.find(l => l.id === listId)
     const store = stores.find(s => s.id === list?.storeId) || stores[0]
+    const [searchQuery, setSearchQuery] = useState("")
+    const [showSearch, setShowSearch] = useState(false)
 
-    if (!list) return <div>Lista no encontrada</div>
+    if (!list) return <div style={{ color: 'var(--text-primary)' }}>Lista no encontrada</div>
 
     // Group items by section
     const groupedItems = useMemo(() => {
         const groups: Record<string, typeof list.items> = {}
-        list.items.forEach(item => {
+        let items = list.items
+
+        // Filter by search
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase()
+            items = items.filter(item => item.name.toLowerCase().includes(query))
+        }
+
+        items.forEach(item => {
             if (!groups[item.sectionId]) groups[item.sectionId] = []
             groups[item.sectionId].push(item)
         })
         return groups
-    }, [list.items])
+    }, [list.items, searchQuery])
 
     // Get sections in store order
     const orderedSections = useMemo(() => {
@@ -65,8 +76,28 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
                         <h2 className="font-bold text-lg leading-tight">{list.name}</h2>
                         <p className="text-xs opacity-80">{completedItems} de {totalItems} productos</p>
                     </div>
-                    <div className="w-10" /> {/* Spacer */}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowSearch(!showSearch)}
+                        className="hover:bg-white/20"
+                    >
+                        <Search className="w-5 h-5" />
+                    </Button>
                 </div>
+
+                {/* Search bar */}
+                {showSearch && (
+                    <div className="mb-3 animate-in fade-in slide-in-from-top-2">
+                        <Input
+                            autoFocus
+                            placeholder="Buscar producto..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="border-white/20 bg-white/10 text-white placeholder:text-white/50"
+                        />
+                    </div>
+                )}
 
                 {/* Progress Bar */}
                 <div className="h-2 bg-black/20 rounded-full overflow-hidden backdrop-blur-sm">
@@ -86,14 +117,11 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
                     const activeItems = items.filter(i => !i.isCompleted)
                     const doneItems = items.filter(i => i.isCompleted)
 
-                    // Hide section if all items are done? No, show them at bottom or crossed out.
-                    // Let's show active first, then done.
-
                     return (
                         <div key={section.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="flex items-center gap-2 mb-3 sticky top-0 bg-white/10 backdrop-blur-md p-2 rounded-lg border border-white/10 z-10">
+                            <div className="flex items-center gap-2 mb-3 sticky top-0 backdrop-blur-md p-2 rounded-lg border z-10" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
                                 <span className="text-2xl">{section.icon}</span>
-                                <h3 className="font-bold text-white text-lg tracking-wide">{section.name}</h3>
+                                <h3 className="font-bold text-lg tracking-wide" style={{ color: 'var(--text-on-gradient)' }}>{section.name}</h3>
                             </div>
 
                             <div className="space-y-2 pl-2">
@@ -102,13 +130,14 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
                                     <div
                                         key={item.id}
                                         onClick={() => toggleItemComplete(listId, item.id)}
-                                        className="flex items-center gap-4 p-4 bg-white rounded-2xl shadow-sm border border-white/50 active:scale-[0.98] transition-transform cursor-pointer"
+                                        className="flex items-center gap-4 p-4 rounded-2xl shadow-sm active:scale-[0.98] transition-transform cursor-pointer"
+                                        style={{ background: 'var(--card-bg-solid)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}
                                     >
-                                        <Circle className="w-6 h-6 text-slate-300 shrink-0" />
+                                        <Circle className="w-6 h-6 shrink-0" style={{ color: 'var(--text-secondary)' }} />
                                         <div className="flex-1">
-                                            <span className="text-lg font-medium text-slate-800">{item.name}</span>
-                                            {item.quantity && <span className="text-slate-500 text-sm ml-2">({item.quantity})</span>}
-                                            {item.note && <p className="text-xs text-amber-600 mt-0.5">{item.note}</p>}
+                                            <span className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>{item.name}</span>
+                                            {item.quantity && <span className="text-sm ml-2 px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">{item.quantity}</span>}
+                                            {item.note && <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{item.note}</p>}
                                         </div>
                                     </div>
                                 ))}
@@ -118,10 +147,11 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
                                     <div
                                         key={item.id}
                                         onClick={() => toggleItemComplete(listId, item.id)}
-                                        className="flex items-center gap-4 p-3 bg-white/40 rounded-xl border border-white/20 opacity-60"
+                                        className="flex items-center gap-4 p-3 rounded-xl opacity-60 cursor-pointer"
+                                        style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}
                                     >
                                         <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
-                                        <span className="text-base font-medium text-slate-600 line-through decoration-slate-400">{item.name}</span>
+                                        <span className="text-base font-medium line-through" style={{ color: 'var(--text-secondary)' }}>{item.name}</span>
                                     </div>
                                 ))}
                             </div>
@@ -130,7 +160,7 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
                 })}
 
                 {list.items.length === 0 && (
-                    <div className="text-center py-20 text-white/60">
+                    <div className="text-center py-20" style={{ color: 'var(--text-secondary)' }}>
                         <p>Lista vacía. ¡Añade cosas antes de comprar!</p>
                     </div>
                 )}
@@ -138,3 +168,4 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
         </div>
     )
 }
+

@@ -24,7 +24,7 @@ export function StoreEdit({ storeId, onNavigate }: StoreEditProps) {
         }
     }, [store])
 
-    if (!store) return <div>Tienda no encontrada</div>
+    if (!store) return <div style={{ color: 'var(--text-primary)' }}>Tienda no encontrada</div>
 
     const handleDragEnd = (result: DropResult) => {
         if (!result.destination) return
@@ -50,8 +50,8 @@ export function StoreEdit({ storeId, onNavigate }: StoreEditProps) {
                 <div className="w-10" />
             </div>
 
-            <div className="bg-white/90 backdrop-blur-xl rounded-t-3xl flex-1 flex flex-col overflow-hidden shadow-2xl border-t border-white/50 mx-[-1rem] px-4 pt-6">
-                <p className="text-sm text-slate-500 mb-4 text-center">
+            <div className="backdrop-blur-xl rounded-t-3xl flex-1 flex flex-col overflow-hidden shadow-2xl mx-[-1rem] px-4 pt-6" style={{ background: 'var(--card-bg-solid)', borderTop: '1px solid var(--card-border)' }}>
+                <p className="text-sm mb-4 text-center" style={{ color: 'var(--text-secondary)' }}>
                     Arrastra las secciones para que coincidan con tu recorrido en el súper.
                 </p>
 
@@ -74,15 +74,20 @@ export function StoreEdit({ storeId, onNavigate }: StoreEditProps) {
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     className={cn(
-                                                        "flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200 shadow-sm transition-shadow",
+                                                        "flex items-center gap-3 p-3 rounded-xl border shadow-sm transition-shadow",
                                                         snapshot.isDragging && "shadow-lg ring-2 ring-indigo-500 z-10"
                                                     )}
+                                                    style={{
+                                                        ...provided.draggableProps.style,
+                                                        background: 'var(--card-bg-solid)',
+                                                        borderColor: 'var(--card-border)'
+                                                    }}
                                                 >
-                                                    <div {...provided.dragHandleProps} className="text-slate-400 cursor-grab active:cursor-grabbing p-1">
+                                                    <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing p-1" style={{ color: 'var(--text-secondary)' }}>
                                                         <GripVertical className="w-5 h-5" />
                                                     </div>
                                                     <span className="text-2xl">{section.icon}</span>
-                                                    <span className="font-medium text-slate-700">{section.name}</span>
+                                                    <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{section.name}</span>
                                                 </div>
                                             )}
                                         </Draggable>
@@ -97,3 +102,4 @@ export function StoreEdit({ storeId, onNavigate }: StoreEditProps) {
         </div>
     )
 }
+

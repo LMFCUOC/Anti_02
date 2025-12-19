@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { ConfirmModal } from "@/components/ui/modal"
 
 interface HomeProps {
     onNavigate: (screen: 'home' | 'list' | 'store', params?: any) => void;
@@ -16,6 +17,7 @@ export function Home({ onNavigate }: HomeProps) {
     const [isImporting, setIsImporting] = useState(false)
     const [newName, setNewName] = useState("")
     const [importText, setImportText] = useState("")
+    const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; listId: string | null }>({ isOpen: false, listId: null })
 
     const handleCreate = (e: React.FormEvent) => {
         e.preventDefault()
@@ -32,10 +34,14 @@ export function Home({ onNavigate }: HomeProps) {
         setIsImporting(false)
     }
 
-    const handleDelete = (e: React.MouseEvent, id: string) => {
+    const handleDeleteClick = (e: React.MouseEvent, id: string) => {
         e.stopPropagation()
-        if (confirm("¿Borrar esta lista?")) {
-            deleteList(id)
+        setDeleteConfirm({ isOpen: true, listId: id })
+    }
+
+    const handleConfirmDelete = () => {
+        if (deleteConfirm.listId) {
+            deleteList(deleteConfirm.listId)
         }
     }
 
@@ -60,9 +66,9 @@ export function Home({ onNavigate }: HomeProps) {
             </div>
 
             {isCreating && (
-                <Card className="animate-in fade-in slide-in-from-top-4">
+                <Card className="animate-in fade-in slide-in-from-top-4" style={{ background: 'var(--card-bg-solid)', borderColor: 'var(--card-border)' }}>
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">Nueva Lista</CardTitle>
+                        <CardTitle className="text-lg" style={{ color: 'var(--text-primary)' }}>Nueva Lista</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleCreate} className="flex gap-2">
@@ -71,18 +77,19 @@ export function Home({ onNavigate }: HomeProps) {
                                 placeholder="Ej: Compra Semanal"
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
+                                style={{ background: 'var(--card-bg)', color: 'var(--text-primary)', borderColor: 'var(--card-border)' }}
                             />
-                            <Button type="submit">Crear</Button>
+                            <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">Crear</Button>
                         </form>
                     </CardContent>
                 </Card>
             )}
 
             {isImporting && (
-                <Card className="animate-in fade-in slide-in-from-top-4">
+                <Card className="animate-in fade-in slide-in-from-top-4" style={{ background: 'var(--card-bg-solid)', borderColor: 'var(--card-border)' }}>
                     <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">Pegar Lista</CardTitle>
-                        <CardDescription>Pega tu lista aquí, una línea por producto.</CardDescription>
+                        <CardTitle className="text-lg" style={{ color: 'var(--text-primary)' }}>Pegar Lista</CardTitle>
+                        <CardDescription style={{ color: 'var(--text-secondary)' }}>Pega tu lista aquí, una línea por producto.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <Textarea
@@ -91,10 +98,11 @@ export function Home({ onNavigate }: HomeProps) {
                             value={importText}
                             onChange={(e) => setImportText(e.target.value)}
                             rows={5}
+                            style={{ background: 'var(--card-bg)', color: 'var(--text-primary)', borderColor: 'var(--card-border)' }}
                         />
                         <div className="flex justify-end gap-2">
-                            <Button variant="ghost" onClick={() => setIsImporting(false)}>Cancelar</Button>
-                            <Button onClick={handleImport}>Importar</Button>
+                            <Button variant="ghost" onClick={() => setIsImporting(false)} style={{ color: 'var(--text-secondary)' }}>Cancelar</Button>
+                            <Button onClick={handleImport} className="bg-indigo-600 hover:bg-indigo-700">Importar</Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -124,11 +132,12 @@ export function Home({ onNavigate }: HomeProps) {
                         <div
                             key={list.id}
                             onClick={() => onNavigate('list', { listId: list.id })}
-                            className="group relative flex items-center justify-between p-4 bg-white/80 hover:bg-white backdrop-blur-md rounded-xl shadow-sm border border-white/40 cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            className="group relative flex items-center justify-between p-4 backdrop-blur-md rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            style={{ background: 'var(--card-bg-solid)', borderColor: 'var(--card-border)', borderWidth: '1px', borderStyle: 'solid' }}
                         >
                             <div>
-                                <h3 className="font-semibold text-slate-800">{list.name}</h3>
-                                <p className="text-sm text-slate-500">
+                                <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{list.name}</h3>
+                                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                                     {new Date(list.createdAt).toLocaleDateString()} • {list.items.length} items
                                 </p>
                             </div>
@@ -136,17 +145,30 @@ export function Home({ onNavigate }: HomeProps) {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-600 hover:bg-red-50"
-                                    onClick={(e) => handleDelete(e, list.id)}
+                                    className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                                    onClick={(e) => handleDeleteClick(e, list.id)}
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </Button>
-                                <ChevronRight className="w-5 h-5 text-slate-400" />
+                                <ChevronRight className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
                             </div>
                         </div>
                     ))
                 )}
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <ConfirmModal
+                isOpen={deleteConfirm.isOpen}
+                onClose={() => setDeleteConfirm({ isOpen: false, listId: null })}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar lista"
+                message="¿Estás seguro de que quieres eliminar esta lista? Esta acción no se puede deshacer."
+                confirmText="Eliminar"
+                cancelText="Cancelar"
+                variant="danger"
+            />
         </div>
     )
 }
+

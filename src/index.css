@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Color tokens */
+  /* Color tokens - Light mode */
   --color-primary: #8B5CF6;
   --color-primary-foreground: #FFFFFF;
 
@@ -14,14 +14,69 @@
   --color-muted: #F3F4F6;
   --color-muted-foreground: #6B7280;
 
+  --color-success: #10B981;
+  --color-success-foreground: #FFFFFF;
+
   --radius-base: 0.5rem;
+}
+
+:root {
+  /* Theme variables - Light */
+  --bg-gradient-from: #8B5CF6;
+  --bg-gradient-via: #A855F7;
+  --bg-gradient-to: #EC4899;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-bg-solid: #FFFFFF;
+  --card-border: rgba(255, 255, 255, 0.4);
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-on-gradient: #FFFFFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Theme variables - Dark */
+    --bg-gradient-from: #312E81;
+    --bg-gradient-via: #581C87;
+    --bg-gradient-to: #831843;
+    --card-bg: rgba(30, 27, 75, 0.8);
+    --card-bg-solid: #1E1B4B;
+    --card-border: rgba(139, 92, 246, 0.2);
+    --text-primary: #F3F4F6;
+    --text-secondary: #9CA3AF;
+    --text-on-gradient: #FFFFFF;
+  }
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, var(--bg-gradient-from), var(--bg-gradient-via), var(--bg-gradient-to));
+  min-height: 100vh;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar for dark mode */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(139, 92, 246, 0.1);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.3);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.5);
+  }
 }
