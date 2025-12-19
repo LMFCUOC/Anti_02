@@ -17,6 +17,7 @@ export const useAppStore = create<AppState>()(
             lists: [],
             sections: normalizedSections,
             activeListId: null,
+            customCategoryMappings: {},
 
             addList: (name) => {
                 const newList: ShoppingList = {
@@ -51,11 +52,25 @@ export const useAppStore = create<AppState>()(
                 let assignedSectionId = sectionId || 'sec_other';
                 if (!sectionId) {
                     const lowerName = name.toLowerCase();
-                    // Simple keyword matching
-                    for (const [key, secId] of Object.entries(PRODUCT_CATEGORY_MAP)) {
-                        if (lowerName.includes(key)) {
+                    const customMappings = get().customCategoryMappings;
+
+                    // Check custom mappings first (user learned categories)
+                    let found = false;
+                    for (const [key, secId] of Object.entries(customMappings)) {
+                        if (lowerName.includes(key.toLowerCase())) {
                             assignedSectionId = secId;
+                            found = true;
                             break;
+                        }
+                    }
+
+                    // Fall back to default mappings
+                    if (!found) {
+                        for (const [key, secId] of Object.entries(PRODUCT_CATEGORY_MAP)) {
+                            if (lowerName.includes(key)) {
+                                assignedSectionId = secId;
+                                break;
+                            }
                         }
                     }
                 }
@@ -155,13 +170,28 @@ export const useAppStore = create<AppState>()(
                 };
 
                 // Create items logic (duplicated from addItem but batched)
+                const customMappings = get().customCategoryMappings;
                 const newItems: ListItem[] = lines.map(line => {
                     let assignedSectionId = 'sec_other';
                     const lowerName = line.toLowerCase();
-                    for (const [key, secId] of Object.entries(PRODUCT_CATEGORY_MAP)) {
-                        if (lowerName.includes(key)) {
+
+                    // Check custom mappings first (user learned categories)
+                    let found = false;
+                    for (const [key, secId] of Object.entries(customMappings)) {
+                        if (lowerName.includes(key.toLowerCase())) {
                             assignedSectionId = secId;
+                            found = true;
                             break;
+                        }
+                    }
+
+                    // Fall back to default mappings
+                    if (!found) {
+                        for (const [key, secId] of Object.entries(PRODUCT_CATEGORY_MAP)) {
+                            if (lowerName.includes(key)) {
+                                assignedSectionId = secId;
+                                break;
+                            }
                         }
                     }
                     return {
@@ -176,6 +206,33 @@ export const useAppStore = create<AppState>()(
 
                 newList.items = newItems;
                 set((state) => ({ lists: [newList, ...state.lists], activeListId: newListId }));
+            },
+
+            updateItemCategory: (listId, itemId, newSectionId, learnMapping) => {
+                const list = get().lists.find(l => l.id === listId);
+                const item = list?.items.find(i => i.id === itemId);
+
+                if (!item) return;
+
+                // Update the item's category
+                set((state) => ({
+                    lists: state.lists.map((l) =>
+                        l.id === listId
+                            ? {
+                                ...l,
+                                items: l.items.map((i) => (i.id === itemId ? { ...i, sectionId: newSectionId } : i)),
+                                updatedAt: Date.now(),
+                            }
+                            : l
+                    ),
+                    // If learning, save the mapping using item name as key
+                    ...(learnMapping ? {
+                        customCategoryMappings: {
+                            ...state.customCategoryMappings,
+                            [item.name.toLowerCase()]: newSectionId
+                        }
+                    } : {})
+                }));
             }
         }),
         {

@@ -1,9 +1,10 @@
 import { useState, useRef, useMemo } from "react"
-import { ArrowLeft, Plus, Play, X, Share2, Search, ChevronDown, ChevronUp, StickyNote } from "lucide-react"
+import { ArrowLeft, Plus, Play, X, Share2, Search, ChevronDown, ChevronUp, StickyNote, GraduationCap } from "lucide-react"
 import { useAppStore } from "@/store/useAppStore"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { CategorySelector } from "@/components/ui/category-selector"
 import { DEFAULT_SECTIONS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
@@ -13,7 +14,7 @@ interface ListDetailProps {
 }
 
 export function ListDetail({ listId, onNavigate }: ListDetailProps) {
-    const { lists, addItem, updateItem, deleteItem, toggleItemComplete } = useAppStore()
+    const { lists, addItem, updateItem, deleteItem, toggleItemComplete, updateItemCategory } = useAppStore()
     const list = lists.find(l => l.id === listId)
     const [newItemName, setNewItemName] = useState("")
     const [newItemQty, setNewItemQty] = useState("")
@@ -21,6 +22,7 @@ export function ListDetail({ listId, onNavigate }: ListDetailProps) {
     const [showSearch, setShowSearch] = useState(false)
     const [expandedItemId, setExpandedItemId] = useState<string | null>(null)
     const [editingNote, setEditingNote] = useState("")
+    const [learnCategory, setLearnCategory] = useState(true)
     const inputRef = useRef<HTMLInputElement>(null)
 
     if (!list) return <div style={{ color: 'var(--text-primary)' }}>Lista no encontrada</div>
@@ -221,9 +223,37 @@ export function ListDetail({ listId, onNavigate }: ListDetailProps) {
                                     </Button>
                                 </div>
 
-                                {/* Expanded section for note */}
+                                {/* Expanded section for note and category */}
                                 {isExpanded && (
-                                    <div className="px-3 pb-3 pt-1 border-t animate-in fade-in slide-in-from-top-2" style={{ borderColor: 'var(--card-border)' }}>
+                                    <div className="px-3 pb-3 pt-2 border-t animate-in fade-in slide-in-from-top-2 space-y-3" style={{ borderColor: 'var(--card-border)' }}>
+                                        {/* Category selector */}
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-medium flex items-center gap-1.5" style={{ color: 'var(--text-secondary)' }}>
+                                                Categoría
+                                            </label>
+                                            <div className="flex items-center gap-3">
+                                                <CategorySelector
+                                                    sections={DEFAULT_SECTIONS}
+                                                    currentSectionId={item.sectionId}
+                                                    onSelect={(newSectionId) => {
+                                                        updateItemCategory(listId, item.id, newSectionId, learnCategory)
+                                                    }}
+                                                />
+                                                <label className="flex items-center gap-2 text-xs cursor-pointer" style={{ color: 'var(--text-secondary)' }}>
+                                                    <Checkbox
+                                                        checked={learnCategory}
+                                                        onCheckedChange={(checked) => setLearnCategory(checked === true)}
+                                                        className="h-4 w-4 data-[state=checked]:bg-indigo-500 data-[state=checked]:border-indigo-500"
+                                                    />
+                                                    <span className="flex items-center gap-1">
+                                                        <GraduationCap className="w-3.5 h-3.5" />
+                                                        Recordar
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {/* Note input */}
                                         <div className="flex gap-2">
                                             <Input
                                                 placeholder="Añadir nota..."
@@ -237,7 +267,7 @@ export function ListDetail({ listId, onNavigate }: ListDetailProps) {
                                             </Button>
                                         </div>
                                         {item.note && (
-                                            <p className="mt-2 text-sm text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                            <p className="text-sm text-amber-600 dark:text-amber-400 flex items-center gap-1">
                                                 <StickyNote className="w-3 h-3" />
                                                 {item.note}
                                             </p>

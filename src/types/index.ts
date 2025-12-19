@@ -59,4 +59,8 @@ export interface AppState {
     reorderStoreSections: (storeId: StoreId, newSectionsOrder: SectionId[]) => void;
 
     importListFromText: (text: string) => void;
+
+    // Custom category mappings
+    customCategoryMappings: Record<string, SectionId>;
+    updateItemCategory: (listId: ListId, itemId: ItemId, newSectionId: SectionId, learnMapping: boolean) => void;
 }
