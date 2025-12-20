@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import type { AppState, ListItem, ShoppingList, StoreProfile } from '@/types';
 import { DEFAULT_SECTIONS, INITIAL_STORE, PRODUCT_CATEGORY_MAP } from '@/lib/constants';
+import { sanitizeImportText, normalizeMappingKey, canAddMapping, isQuotaExceeded } from '@/lib/storage';
 
 // Helper to normalize sections
 const normalizedSections = DEFAULT_SECTIONS.reduce((acc, section) => {
@@ -155,7 +156,8 @@ export const useAppStore = create<AppState>()(
             },
 
             importListFromText: (text) => {
-                const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                // Sanitize and limit input to prevent storage overflow
+                const lines = sanitizeImportText(text);
                 if (lines.length === 0) return;
 
                 const newListId = uuidv4();
@@ -214,29 +216,71 @@ export const useAppStore = create<AppState>()(
 
                 if (!item) return;
 
-                // Update the item's category
-                set((state) => ({
-                    lists: state.lists.map((l) =>
-                        l.id === listId
-                            ? {
-                                ...l,
-                                items: l.items.map((i) => (i.id === itemId ? { ...i, sectionId: newSectionId } : i)),
-                                updatedAt: Date.now(),
-                            }
-                            : l
-                    ),
-                    // If learning, save the mapping using item name as key
-                    ...(learnMapping ? {
-                        customCategoryMappings: {
-                            ...state.customCategoryMappings,
-                            [item.name.toLowerCase()]: newSectionId
+                // Prepare updated lists
+                const updatedLists = get().lists.map((l) =>
+                    l.id === listId
+                        ? {
+                            ...l,
+                            items: l.items.map((i) => (i.id === itemId ? { ...i, sectionId: newSectionId } : i)),
+                            updatedAt: Date.now(),
                         }
-                    } : {})
-                }));
+                        : l
+                );
+
+                // Update the item's category
+                if (learnMapping) {
+                    const key = normalizeMappingKey(item.name);
+                    const currentMappings = get().customCategoryMappings;
+
+                    // Only add mapping if under limit or key already exists
+                    if (canAddMapping(currentMappings, key)) {
+                        set({
+                            lists: updatedLists,
+                            customCategoryMappings: {
+                                ...currentMappings,
+                                [key]: newSectionId
+                            }
+                        });
+                    } else {
+                        // At limit, just update item without learning
+                        set({ lists: updatedLists });
+                    }
+                } else {
+                    set({ lists: updatedLists });
+                }
+            },
+
+            clearAllData: () => {
+                set({
+                    stores: [INITIAL_STORE],
+                    lists: [],
+                    sections: normalizedSections,
+                    activeListId: null,
+                    customCategoryMappings: {},
+                });
+            },
+
+            clearLearnedMappings: () => {
+                set({ customCategoryMappings: {} });
             }
         }),
         {
             name: 'mercadona-flow-storage',
+            storage: createJSONStorage(() => ({
+                getItem: (name) => localStorage.getItem(name),
+                setItem: (name, value) => {
+                    try {
+                        localStorage.setItem(name, value);
+                    } catch (e) {
+                        if (isQuotaExceeded(e)) {
+                            console.error('[Storage] Quota exceeded. Consider clearing old data.');
+                            // The app will continue working with the previous state
+                        }
+                        throw e;
+                    }
+                },
+                removeItem: (name) => localStorage.removeItem(name),
+            })),
         }
     )
 );

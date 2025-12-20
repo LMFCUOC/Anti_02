@@ -63,4 +63,8 @@ export interface AppState {
     // Custom category mappings
     customCategoryMappings: Record<string, SectionId>;
     updateItemCategory: (listId: ListId, itemId: ItemId, newSectionId: SectionId, learnMapping: boolean) => void;
+
+    // Data management
+    clearAllData: () => void;
+    clearLearnedMappings: () => void;
 }
