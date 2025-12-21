@@ -11,6 +11,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="Lista de compra inteligente ordenada por pasillos de Mercadona" />
+
+  <!-- CSP Meta Tag (fallback para desarrollo local) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+                 script-src 'self' 'unsafe-inline'; 
+                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; 
+                 font-src 'self' https://fonts.gstatic.com; 
+                 img-src 'self' data: https: blob:; 
+                 connect-src 'self' https://*.supabase.co wss://*.supabase.co ws://localhost:* http://localhost:*;
+                 frame-ancestors 'none';">
+
   <title>Mercadona Flow</title>
   <!-- Google Fonts - Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +34,7 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+        navigator.serviceWorker.register('/sw.js').catch(() => { });
       });
     }
   </script>
