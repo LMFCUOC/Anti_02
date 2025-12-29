@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mercadona-flow-v1';
+const CACHE_NAME = 'mercadona-flow-v2';
 
 // Assets estáticos que se cachean al instalar
 const STATIC_ASSETS = [

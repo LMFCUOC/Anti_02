@@ -8,7 +8,8 @@ export function AppShell({ className, children, ...props }: AppShellProps) {
         <div className="min-h-screen p-4 flex justify-center items-start">
             <div
                 className={cn(
-                    "w-full max-w-md min-h-[90vh] backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col",
+                    "w-full max-w-md min-h-[90vh] rounded-3xl shadow-2xl overflow-hidden flex flex-col",
+                    "md:backdrop-blur-xl", // Solo aplicar backdrop-blur en desktop
                     className
                 )}
                 style={{
@@ -24,3 +25,4 @@ export function AppShell({ className, children, ...props }: AppShellProps) {
         </div>
     )
 }
+
