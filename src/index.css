@@ -48,6 +48,19 @@
   }
 }
 
+/* Mobile fallback: más opacidad cuando backdrop-blur no funciona bien */
+@media (max-width: 768px) {
+  :root {
+    --card-bg: rgba(255, 255, 255, 0.95);
+  }
+}
+
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: rgba(30, 27, 75, 0.95);
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -69,13 +82,16 @@ body {
   ::-webkit-scrollbar {
     width: 8px;
   }
+
   ::-webkit-scrollbar-track {
     background: rgba(139, 92, 246, 0.1);
   }
+
   ::-webkit-scrollbar-thumb {
     background: rgba(139, 92, 246, 0.3);
     border-radius: 4px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(139, 92, 246, 0.5);
   }
