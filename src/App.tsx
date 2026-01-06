@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { AppShell } from '@/components/layout/AppShell'
 import { Header } from '@/components/layout/Header'
 import { Home } from '@/components/features/lists/Home'
@@ -29,6 +30,7 @@ function App() {
         {screen === 'store' && <StoreList onNavigate={navigate} />}
         {screen === 'store-edit' && <StoreEdit storeId={params.storeId} onNavigate={navigate} />}
       </main>
+      <SpeedInsights />
     </AppShell>
   )
 }
