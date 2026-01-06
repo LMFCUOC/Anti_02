@@ -54,6 +54,8 @@
     /* Morado más oscuro para buen contraste con texto blanco */
     --card-bg: #7C3AED;
     --card-bg-solid: #6D28D9;
+    --text-primary: #FFFFFF;
+    --text-secondary: #E9D5FF;
   }
 }
 

@@ -27,6 +27,22 @@ export const INITIAL_STORE: StoreProfile = {
 // Note: The algorithm searches for these keywords in the product name (case insensitive)
 // First match wins, so order matters for disambiguation
 export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
+    // Limpieza y Hogar (Subido para evitar conflictos con 'te' en detergente)
+    'detergente': 'sec_cleaning',
+    'suavizante': 'sec_cleaning',
+    'lejia': 'sec_cleaning',
+    'fregasuelos': 'sec_cleaning',
+    'lavavajillas': 'sec_cleaning',
+    'limpiador': 'sec_cleaning',
+    'papel cocina': 'sec_cleaning',
+    'papel higienico': 'sec_cleaning',
+    'servilleta': 'sec_cleaning',
+    'pañuelo': 'sec_cleaning',
+    'bolsa basura': 'sec_cleaning',
+    'estropajo': 'sec_cleaning',
+    'bayeta': 'sec_cleaning',
+    'fregona': 'sec_cleaning',
+
     // Fruta y Verdura
     'tomate': 'sec_fruit',
     'cherry': 'sec_fruit',
@@ -75,7 +91,7 @@ export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
     'magdalena': 'sec_bakery',
     'bizcocho': 'sec_bakery',
 
-    // Charcutería y Quesos (antes de carnicería para que jamón serrano vaya aquí)
+    // Charcutería y Quesos
     'jamon': 'sec_deli',
     'serrano': 'sec_deli',
     'york': 'sec_deli',
@@ -105,7 +121,7 @@ export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
     'chuleta': 'sec_meat',
     'picada': 'sec_meat',
     'carne': 'sec_meat',
-    'hamburgues': 'sec_meat', // hamburguesa, hamburguesas
+    'hamburgues': 'sec_meat',
     'pollo': 'sec_meat',
     'pechuga': 'sec_meat',
     'muslo': 'sec_meat',
@@ -128,7 +144,7 @@ export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
     'mejillon': 'sec_fish',
     'almeja': 'sec_fish',
 
-    // Refrigerados (lácteos, huevos, pizzas, etc.)
+    // Refrigerados
     'leche': 'sec_fridge',
     'yogur': 'sec_fridge',
     'yogurt': 'sec_fridge',
@@ -146,7 +162,7 @@ export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
     'zumo refrigerado': 'sec_fridge',
     'batido': 'sec_fridge',
 
-    // Despensa (conservas, pasta, arroz, aceite)
+    // Despensa
     'arroz': 'sec_pantry',
     'pasta': 'sec_pantry',
     'espagueti': 'sec_pantry',
@@ -189,7 +205,7 @@ export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
     'nugget': 'sec_frozen',
     'varita': 'sec_frozen',
 
-    // Bebidas (debe ir antes que otros productos que contengan estas palabras)
+    // Bebidas
     'coca': 'sec_drinks',
     'cola': 'sec_drinks',
     'pepsi': 'sec_drinks',
@@ -205,22 +221,6 @@ export const PRODUCT_CATEGORY_MAP: Record<string, string> = {
     'cava': 'sec_drinks',
     'sangria': 'sec_drinks',
     'tonica': 'sec_drinks',
-
-    // Limpieza y Hogar
-    'detergente': 'sec_cleaning',
-    'suavizante': 'sec_cleaning',
-    'lejia': 'sec_cleaning',
-    'fregasuelos': 'sec_cleaning',
-    'lavavajillas': 'sec_cleaning',
-    'limpiador': 'sec_cleaning',
-    'papel cocina': 'sec_cleaning',
-    'papel higienico': 'sec_cleaning',
-    'servilleta': 'sec_cleaning',
-    'pañuelo': 'sec_cleaning',
-    'bolsa basura': 'sec_cleaning',
-    'estropajo': 'sec_cleaning',
-    'bayeta': 'sec_cleaning',
-    'fregona': 'sec_cleaning',
 
     // Perfumería
     'champu': 'sec_personal',

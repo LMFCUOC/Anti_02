@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { ArrowLeft, CheckCircle2, Circle, Search } from "lucide-react"
+import { ArrowLeft, CheckCircle2, Circle, Search, X } from "lucide-react"
 import { useAppStore } from "@/store/useAppStore"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -88,14 +88,22 @@ export function ShoppingMode({ listId, onNavigate }: ShoppingModeProps) {
 
                 {/* Search bar */}
                 {showSearch && (
-                    <div className="mb-3 animate-in fade-in slide-in-from-top-2">
+                    <div className="mb-3 animate-in fade-in slide-in-from-top-2 relative">
                         <Input
                             autoFocus
                             placeholder="Buscar producto..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="border-white/20 bg-white/10 text-white placeholder:text-white/50"
+                            className="border-white/20 bg-white/10 text-white placeholder:text-white/50 pr-10"
                         />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                 )}
 

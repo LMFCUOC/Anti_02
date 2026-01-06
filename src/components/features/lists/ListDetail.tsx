@@ -127,14 +127,22 @@ export function ListDetail({ listId, onNavigate }: ListDetailProps) {
             <div className="rounded-t-3xl flex-1 flex flex-col overflow-hidden shadow-2xl mx-[-1rem] px-4 pt-5 pb-4" style={{ background: 'var(--card-bg)', borderTop: '1px solid var(--card-border)' }}>
                 {/* Search bar */}
                 {showSearch && (
-                    <div className="mb-3 animate-in fade-in slide-in-from-top-2">
+                    <div className="mb-3 animate-in fade-in slide-in-from-top-2 relative">
                         <Input
                             placeholder="Buscar producto..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="border-slate-200 dark:border-slate-700"
+                            className="border-slate-200 dark:border-slate-700 pr-10"
                             style={{ background: 'var(--card-bg-solid)', color: 'var(--text-primary)' }}
                         />
+                        {searchQuery && (
+                            <button
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        )}
                     </div>
                 )}
 
