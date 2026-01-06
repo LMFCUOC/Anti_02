@@ -48,17 +48,18 @@
   }
 }
 
-/* Mobile: fondo sólido para evitar problemas de contraste y transparencia */
+/* Mobile: colores sólidos para mejor contraste */
 @media (max-width: 768px) {
   :root {
-    --card-bg: #FFFFFF;
-    --card-bg-solid: #FFFFFF;
+    /* Morado más oscuro para buen contraste con texto blanco */
+    --card-bg: #7C3AED;
+    --card-bg-solid: #6D28D9;
   }
 }
 
 @media (max-width: 768px) and (prefers-color-scheme: dark) {
   :root {
-    --card-bg: #1E1B4B;
+    --card-bg: rgba(30, 27, 75, 0.9);
     --card-bg-solid: #1E1B4B;
   }
 }
