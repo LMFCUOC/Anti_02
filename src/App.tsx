@@ -11,6 +11,8 @@ import { StoreEdit } from '@/components/features/store/StoreEdit'
 type Screen = 'home' | 'list' | 'shopping' | 'store' | 'store-edit';
 
 function App() {
+  // @ts-ignore
+  if (window.vlog) window.vlog("App component montando...");
   const [screen, setScreen] = useState<Screen>('home')
   const [params, setParams] = useState<any>({})
 
