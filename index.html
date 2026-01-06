@@ -11,56 +11,16 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="Lista de compra inteligente ordenada por pasillos de Mercadona" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+
+  <title>Mercadona Flow</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <script>
-    // VERSIÓN DE RESCATE: 1.1.1
-    // Si no ves este banner NARANJA arriba, tu móvil está cargando una versión obsoleta.
-    document.addEventListener('DOMContentLoaded', function () {
-      var banner = document.createElement('div');
-      banner.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#fd7e14;color:white;text-align:center;padding:10px;font-size:12px;z-index:99999;font-weight:bold;';
-      banner.id = 'debug-version-banner';
-      banner.textContent = 'MERCADONA FLOW - VERSIÓN 1.1.1 (NARANJA)';
-      document.body.appendChild(banner);
-
-      var logDiv = document.createElement('div');
-      logDiv.id = 'vlog-container';
-      logDiv.style.cssText = 'position:fixed;bottom:0;left:0;width:100%;z-index:9998;background:rgba(0,0,0,0.9);color:#0f0;font-size:10px;max-height:150px;overflow:auto;padding:5px;border-top:1px solid #444;';
-      document.body.appendChild(logDiv);
-
-      window.vlog = function (msg) {
-        var p = document.createElement('p');
-        p.style.margin = '2px';
-        p.textContent = '[' + new Date().toLocaleTimeString() + '] > ' + msg;
-        logDiv.appendChild(p);
-        logDiv.scrollTop = logDiv.scrollHeight;
-      };
-
-      vlog("Iniciando index 1.1.1");
-
-      // Test de LocalStorage
-      try {
-        localStorage.setItem('test_health', 'ok');
-        localStorage.removeItem('test_health');
-        vlog("LocalStorage: OK");
-      } catch (e) {
-        vlog("❌ LocalStorage ERROR: " + e.message);
-      }
-
-      if (window.location.search.includes('force=true')) {
-        vlog("Limpieza forzada activada...");
-        clearResetApp();
-      }
-    });
-
-    window.addEventListener('unhandledrejection', function (event) {
-      if (window.vlog) vlog("❌ PROMISE ERROR: " + event.reason);
-    });
-
+    // Sistema silente de recuperación de emergencia
     function clearResetApp() {
-      if (window.vlog) vlog("Borrando todo...");
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function (registrations) {
           for (var i = 0; i < registrations.length; i++) registrations[i].unregister();
@@ -68,7 +28,6 @@
             for (var j = 0; j < names.length; j++) caches.delete(names[j]);
             localStorage.clear();
             sessionStorage.clear();
-            alert("Limpieza completada. Pulsa OK para reiniciar.");
             window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
           });
         });
@@ -78,43 +37,32 @@
       }
     }
 
-    window.onerror = function (msg, url, line, col, error) {
-      if (window.vlog) vlog("❌ JS ERROR: " + msg + " (" + line + ":" + col + ")");
-      return false;
-    };
+    // Si algo sale muy mal, el usuario puede añadir ?force=true para limpiar todo
+    if (window.location.search.includes('force=true')) {
+      clearResetApp();
+    }
   </script>
-
-  <title>Mercadona Flow</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body style="margin:0; padding-top:40px; background:#1a1a1a;">
+<body>
   <div id="root"></div>
-
-  <!-- Botón de emergencia físico -->
-  <button onclick="clearResetApp()"
-    style="position:fixed;top:50px;right:10px;z-index:99999;background:red;color:white;border:none;padding:5px 10px;border-radius:4px;font-size:10px;font-weight:bold;">RESETEAR
-    APP</button>
-
-  <script>
-    window.addEventListener('error', function (e) {
-      if (e.target.tagName === 'SCRIPT') {
-        if (window.vlog) vlog("❌ FALLO CARGA: " + e.target.src.split('/').pop());
-      }
-    }, true);
-  </script>
-
   <script type="module" src="/src/main.tsx"></script>
-
   <script>
-    // Service Worker de Kill-Switch
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js?v=9')
-          .then(reg => { if (window.vlog) vlog("SW v9 registrado"); })
-          .catch(err => { if (window.vlog) vlog("Err SW: " + err.message); });
+        // Registramos el sw sin v-params para permitir actualizaciones normales de Vite PWA
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            registration.onupdatefound = () => {
+              const installingWorker = registration.installing;
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  window.location.reload();
+                }
+              };
+            };
+          })
+          .catch(() => { });
       });
     }
   </script>

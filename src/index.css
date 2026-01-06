@@ -48,16 +48,18 @@
   }
 }
 
-/* Mobile fallback: más opacidad cuando backdrop-blur no funciona bien */
+/* Mobile: fondo sólido para evitar problemas de contraste y transparencia */
 @media (max-width: 768px) {
   :root {
-    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-bg: #FFFFFF;
+    --card-bg-solid: #FFFFFF;
   }
 }
 
 @media (max-width: 768px) and (prefers-color-scheme: dark) {
   :root {
-    --card-bg: rgba(30, 27, 75, 0.95);
+    --card-bg: #1E1B4B;
+    --card-bg-solid: #1E1B4B;
   }
 }
 
